@@ -1,0 +1,24 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  resourceGroupName: 'test-vm-rg'
+  location: 'Central India'
+  vmName: 'my-vm'
+  adminPassword: 'password'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Pay-As-You-Go' # Replace with your Azure service connection name
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az group create --name $(resourceGroupName) --location "$(location)"
+      az deployment group create \
+        --resource-group $(resourceGroupName) \
+        --template-file vm-deployment.bicep \
+        --parameters location="$(location)" vmName="$(vmName)" adminPassword="$(adminPassword)"
